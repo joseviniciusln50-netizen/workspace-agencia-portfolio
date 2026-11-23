@@ -1,0 +1,20 @@
+# Netlify — demonstração do Workspace.
+# O Next.js 16 é detectado automaticamente (adaptador OpenNext da Netlify); este arquivo só
+# fixa o comando de build e a versão do Node para builds reproduzíveis.
+# Credenciais (DEMO_AUTH_USER / DEMO_AUTH_PASSWORD) ficam no PAINEL da Netlify, nunca aqui.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Service worker (SÓ notificações): a Netlify serve public/ direto do CDN e ignora os headers()
+# do next.config para esses arquivos. Aqui: sempre a versão nova e restrito à própria origem.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'"

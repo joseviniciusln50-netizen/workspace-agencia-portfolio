@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Workspace — tokens da marca (paleta preto/vermelho/branco)
+   Paleta oficial: Preto #000000 · Vermelho #FF0000 · Branco #FFFFFF · Cinza #E7E3E0
+   ------------------------------------------------------------------ */
+@theme {
+  --color-ink: #000000;
+  --color-brand: #ff0000;
+  /* Vermelho para TEXTO pequeno: #FF0000 sobre branco tem contraste ~4:1 (abaixo de AA). */
+  --color-brand-text: #d40000;
+  --color-paper: #ffffff;
+  --color-mist: #e7e3e0;
+  /* fundo da aplicação: branco levemente neutro (sem puxar para o bege) */
+  --color-mist-soft: #f5f5f5;
+  --color-graphite: #1a1a1a;
+  --color-muted: #6b6662;
+  /* divisórias finas — inspiradas no grid institucional da prancha */
+  --color-hairline: #e3e3e3;
+
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+
+  /* Arredondamentos:
+     glass → componentes Liquid Glass (preservados, mais orgânicos)
+     card  → cartões e painéis convencionais (editorial, contido)
+     tile  → elementos internos (cards de tarefa, chips, tags)        */
+  --radius-glass: 1.5rem;
+  --radius-card: 0.625rem;
+  --radius-tile: 0.375rem;
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Workspace Premium — sombras por MATERIAL (ver docs/DESIGN-SYSTEM.md). Sem cores novas: só preto/vermelho/branco.
+     float   → elementos que flutuam sobre o conteúdo (dock, menus)
+     overlay → painéis/sheets acima de um véu escuro
+     brand   → brilho do botão principal vermelho                                  */
+  --shadow-float: 0 18px 40px -16px rgb(0 0 0 / 0.55), 0 6px 14px -6px rgb(0 0 0 / 0.35);
+  --shadow-overlay: 0 30px 80px -24px rgb(0 0 0 / 0.55), 0 -10px 40px -24px rgb(0 0 0 / 0.25);
+  --shadow-brand: 0 10px 22px -12px rgb(255 0 0 / 0.7);
+}
+
+:root {
+  /* Altura da faixa "Powered by Netlify" (medida em BadgeSafeArea; 0 sem a faixa). */
+  --badge-h: 0px;
+  --background: var(--color-mist-soft);
+  --foreground: var(--color-ink);
+  color-scheme: light;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-brand);
+  color: var(--color-paper);
+}
+
+/* ---------- Liquid Glass ----------
+   Usar com moderação (direcionamento da marca: "em alguns componentes").
+   .glass        → vidro claro sobre fundo claro/colorido
+   .glass-dark   → vidro translúcido sobre blocos pretos/vermelhos
+   .glass-ink    → vidro preto fumê sobre fundo claro (tab bar mobile)   */
+@utility glass {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.38));
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.7);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    inset 0 -1px 0 rgb(0 0 0 / 0.04),
+    0 10px 30px -12px rgb(0 0 0 / 0.18);
+}
+
+@utility glass-dark {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.04));
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    0 10px 30px -12px rgb(0 0 0 / 0.5);
+  color: var(--color-paper);
+}
+
+@utility glass-ink {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgb(20 20 20 / 0.82), rgb(0 0 0 / 0.7));
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 16px 34px -14px rgb(0 0 0 / 0.55);
+  color: var(--color-paper);
+}
+
+/* Neve do tema sazonal (src/components/seasonal): lenta, poucos flocos, some na metade de cima.
+   Só transform/opacity (GPU). Variáveis por floco: --o (opacidade), --drift, --fall. */
+@keyframes ajm-snow {
+  0% { transform: translate3d(0, -4vh, 0); opacity: 0; }
+  12% { opacity: var(--o); }
+  70% { opacity: calc(var(--o) * 0.6); }
+  100% { transform: translate3d(var(--drift), var(--fall), 0); opacity: 0; }
+}
+.ajm-snowflake {
+  animation-name: ajm-snow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+/* Grid editorial da linguagem gráfica da marca */
+@utility brand-grid {
+  background-image:
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Grid editorial com diagonais (ajuste visual 6): a cada 2 módulos, uma diagonal de canto a canto.
+   As diagonais se emendam entre os blocos e formam linhas contínuas a 45°. Cor = currentColor. */
+@utility brand-grid-diagonal {
+  background-image:
+    linear-gradient(45deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to right, currentColor 1px, transparent 1px),
+    linear-gradient(to bottom, currentColor 1px, transparent 1px);
+  background-size: 96px 96px, 48px 48px, 48px 48px;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Acessibilidade: quem pede menos transparência recebe superfícies sólidas */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--color-paper);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .glass-dark,
+  .glass-ink {
+    background: var(--color-graphite);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ---------- Telas de acesso (Fase 2 · Etapa A) ---------- */
+
+/* Ponto "REC" piscando (câmera gravando) */
+@keyframes rec-blink {
+  0% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+
+/* Carregamento: o selo "respira" só em ESCALA (sem opacidade/filtros sobre a marca) */
+@keyframes seal-breathe {
+  0%, 100% { transform: scale(0.96); }
+  50% { transform: scale(1); }
+}
+
+/* Preenchimento automático do Safari/Chrome: mantém o campo escuro e legível no card */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-paper);
+  caret-color: var(--color-paper);
+  box-shadow: inset 0 0 0 1000px #1a1a1a;
+  transition: background-color 9999s ease-out;
+}
